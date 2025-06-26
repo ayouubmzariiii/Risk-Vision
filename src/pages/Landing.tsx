@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Button from '../components/ui/Button';
+import Modal from '../components/ui/Modal';
 import { Card, CardContent } from '../components/ui/Card';
 import { 
   Shield, 
@@ -17,12 +18,17 @@ import {
   TrendingUp,
   Lock,
   Globe,
-  Download
+  Download,
+  X,
+  Crown,
+  Building,
+  Sparkles
 } from 'lucide-react';
 
 const Landing: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const [selectedModal, setSelectedModal] = useState<string | null>(null);
 
   const handleGetStarted = () => {
     if (user) {
@@ -36,32 +42,56 @@ const Landing: React.FC = () => {
     {
       icon: <Brain className="w-8 h-8 text-blue-600" />,
       title: "AI-Powered Risk Generation",
-      description: "Generate comprehensive project risks using advanced AI that considers your industry, team composition, and project specifics."
+      description: "Generate comprehensive project risks using advanced AI that considers your industry, team composition, and project specifics.",
+      details: {
+        title: "AI-Powered Risk Generation",
+        content: "Our advanced AI engine analyzes your project context, industry standards, and team composition to generate comprehensive risk assessments. The system considers factors like project timeline, budget constraints, regulatory requirements, and team expertise to identify potential risks that human analysis might miss. With machine learning algorithms trained on thousands of successful projects, RiskVision provides accurate, contextual risk identification that evolves with your project needs."
+      }
     },
     {
       icon: <Users className="w-8 h-8 text-emerald-600" />,
       title: "Team Collaboration",
-      description: "Assign risks to team members, track progress, and collaborate in real-time with role-based access control."
+      description: "Assign risks to team members, track progress, and collaborate in real-time with role-based access control.",
+      details: {
+        title: "Team Collaboration",
+        content: "Enable seamless collaboration across your entire project team with role-based access control, real-time updates, and intelligent task assignment. Team members can update risk statuses, add comments, and share insights while maintaining security and accountability. The platform supports multiple user roles including project managers, risk analysts, and stakeholders, each with appropriate permissions and customized dashboards."
+      }
     },
     {
       icon: <BarChart3 className="w-8 h-8 text-purple-600" />,
       title: "Interactive Risk Matrix",
-      description: "Visualize risks with an interactive matrix showing probability vs impact, with color-coded priority levels."
+      description: "Visualize risks with an interactive matrix showing probability vs impact, with color-coded priority levels.",
+      details: {
+        title: "Interactive Risk Matrix",
+        content: "Visualize your project risks with our dynamic, interactive risk matrix that plots probability against impact. The color-coded system instantly identifies critical, high, medium, and low priority risks. Interactive tooltips provide detailed risk information, while drag-and-drop functionality allows for easy risk reassessment. Export capabilities ensure stakeholders can access visual risk summaries for presentations and reports."
+      }
     },
     {
       icon: <FileText className="w-8 h-8 text-amber-600" />,
       title: "Comprehensive Reporting",
-      description: "Generate detailed PDF reports and CSV exports for stakeholders and compliance requirements."
+      description: "Generate detailed PDF reports and CSV exports for stakeholders and compliance requirements.",
+      details: {
+        title: "Comprehensive Reporting",
+        content: "Generate professional, detailed reports with customizable templates for different stakeholder needs. PDF reports include executive summaries, detailed risk analyses, mitigation strategies, and progress tracking. CSV exports enable data analysis in external tools. Automated report scheduling ensures stakeholders receive regular updates, while compliance templates meet industry standards for risk documentation."
+      }
     },
     {
       icon: <Target className="w-8 h-8 text-red-600" />,
       title: "Mitigation Strategies",
-      description: "AI-generated mitigation strategies with timelines, responsibilities, and success metrics tailored to your team."
+      description: "AI-generated mitigation strategies with timelines, responsibilities, and success metrics tailored to your team.",
+      details: {
+        title: "Mitigation Strategies",
+        content: "Receive AI-generated, actionable mitigation strategies tailored to your specific risks and team capabilities. Each strategy includes detailed implementation timelines, assigned responsibilities, resource requirements, and measurable success criteria. The system considers your team's expertise, available resources, and project constraints to provide realistic, achievable mitigation plans that can be immediately implemented."
+      }
     },
     {
       icon: <Lock className="w-8 h-8 text-indigo-600" />,
       title: "Secure & Compliant",
-      description: "Enterprise-grade security with Firebase authentication and role-based access control for sensitive data."
+      description: "Enterprise-grade security with Firebase authentication and role-based access control for sensitive data.",
+      details: {
+        title: "Secure & Compliant",
+        content: "Built with enterprise-grade security featuring end-to-end encryption, secure authentication, and comprehensive audit trails. The platform complies with industry standards including SOC 2, GDPR, and HIPAA requirements. Role-based access control ensures sensitive information is only accessible to authorized personnel, while regular security audits and penetration testing maintain the highest security standards."
+      }
     }
   ];
 
@@ -70,25 +100,41 @@ const Landing: React.FC = () => {
       number: "01",
       title: "Create Your Project",
       description: "Set up your project with team members, industry details, and project specifications.",
-      image: "https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=800"
+      image: "https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=800",
+      details: {
+        title: "Create Your Project",
+        content: "Start by setting up your project with comprehensive details including industry type, project scope, timeline, and budget. Add team members with their roles and expertise levels. The system uses this information to provide contextual risk analysis and tailored mitigation strategies. Integration with popular project management tools ensures seamless workflow adoption."
+      }
     },
     {
       number: "02",
       title: "Generate AI-Powered Risks",
       description: "Let our AI analyze your project context and generate comprehensive risk assessments.",
-      image: "https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg?auto=compress&cs=tinysrgb&w=800"
+      image: "https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg?auto=compress&cs=tinysrgb&w=800",
+      details: {
+        title: "Generate AI-Powered Risks",
+        content: "Our AI engine analyzes your project parameters and generates a comprehensive list of potential risks specific to your industry, project type, and team composition. The system considers historical data, industry best practices, and current market conditions to identify risks across all categories including technical, financial, operational, and regulatory concerns."
+      }
     },
     {
       number: "03",
       title: "Develop Mitigation Strategies",
       description: "Get AI-generated mitigation strategies with detailed timelines and team responsibilities.",
-      image: "https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=800"
+      image: "https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=800",
+      details: {
+        title: "Develop Mitigation Strategies",
+        content: "For each identified risk, receive detailed mitigation strategies that include step-by-step implementation plans, resource requirements, timeline estimates, and success metrics. Strategies are customized based on your team's capabilities and project constraints, ensuring practical and achievable risk mitigation approaches."
+      }
     },
     {
       number: "04",
       title: "Monitor & Report",
       description: "Track progress, update risk statuses, and generate comprehensive reports for stakeholders.",
-      image: "https://images.pexels.com/photos/669610/pexels-photo-669610.jpeg?auto=compress&cs=tinysrgb&w=800"
+      image: "https://images.pexels.com/photos/669610/pexels-photo-669610.jpeg?auto=compress&cs=tinysrgb&w=800",
+      details: {
+        title: "Monitor & Report",
+        content: "Continuously monitor risk status with real-time dashboards and automated alerts. Generate comprehensive reports for different stakeholder groups, from executive summaries to detailed technical analyses. Automated reporting ensures consistent communication while customizable templates meet specific organizational requirements."
+      }
     }
   ];
 
@@ -115,6 +161,103 @@ const Landing: React.FC = () => {
       rating: 5
     }
   ];
+
+  const pricingPlans = [
+    {
+      name: "Starter",
+      price: "$29",
+      period: "per month",
+      description: "Perfect for small teams and individual projects",
+      icon: <Zap className="w-6 h-6 text-blue-600" />,
+      features: [
+        "Up to 3 projects",
+        "5 team members",
+        "AI risk generation",
+        "Basic reporting",
+        "Email support",
+        "Risk matrix visualization",
+        "CSV exports"
+      ],
+      popular: false,
+      buttonText: "Start Free Trial"
+    },
+    {
+      name: "Professional",
+      price: "$79",
+      period: "per month",
+      description: "Ideal for growing teams and multiple projects",
+      icon: <Crown className="w-6 h-6 text-emerald-600" />,
+      features: [
+        "Unlimited projects",
+        "25 team members",
+        "Advanced AI insights",
+        "Custom reporting",
+        "Priority support",
+        "Advanced analytics",
+        "PDF report generation",
+        "Team collaboration tools",
+        "Custom risk categories"
+      ],
+      popular: true,
+      buttonText: "Start Free Trial"
+    },
+    {
+      name: "Enterprise",
+      price: "$199",
+      period: "per month",
+      description: "For large organizations with complex needs",
+      icon: <Building className="w-6 h-6 text-purple-600" />,
+      features: [
+        "Unlimited everything",
+        "Unlimited team members",
+        "Custom AI training",
+        "White-label reports",
+        "24/7 phone support",
+        "API access",
+        "SSO integration",
+        "Custom integrations",
+        "Dedicated account manager",
+        "Compliance reporting",
+        "Advanced security features"
+      ],
+      popular: false,
+      buttonText: "Contact Sales"
+    }
+  ];
+
+  const openModal = (modalId: string) => {
+    setSelectedModal(modalId);
+  };
+
+  const closeModal = () => {
+    setSelectedModal(null);
+  };
+
+  const getModalContent = () => {
+    if (!selectedModal) return null;
+
+    // Check if it's a feature modal
+    const feature = features.find(f => f.title === selectedModal);
+    if (feature) {
+      return {
+        title: feature.details.title,
+        content: feature.details.content
+      };
+    }
+
+    // Check if it's a step modal
+    const step = steps.find(s => s.title === selectedModal);
+    if (step) {
+      return {
+        title: step.details.title,
+        content: step.details.content
+      };
+    }
+
+    return null;
+  };
+
+  const modalContent = getModalContent();
 
   return (
     <div className="min-h-screen bg-white">
@@ -225,7 +368,14 @@ const Landing: React.FC = () => {
                 <CardContent className="p-8">
                   <div className="mb-4">{feature.icon}</div>
                   <h3 className="text-xl font-semibold text-gray-900 mb-3">{feature.title}</h3>
-                  <p className="text-gray-600 leading-relaxed">{feature.description}</p>
+                  <p className="text-gray-600 leading-relaxed mb-4">{feature.description}</p>
+                  <button
+                    onClick={() => openModal(feature.title)}
+                    className="flex items-center text-blue-600 font-medium hover:text-blue-700 transition-colors"
+                  >
+                    <span>Learn more</span>
+                    <ArrowRight size={16} className="ml-2" />
+                  </button>
                 </CardContent>
               </Card>
             ))}
@@ -260,10 +410,13 @@ const Landing: React.FC = () => {
                   <p className="text-lg text-gray-600 leading-relaxed mb-6">
                     {step.description}
                   </p>
-                  <div className="flex items-center text-blue-600 font-medium">
+                  <button
+                    onClick={() => openModal(step.title)}
+                    className="flex items-center text-blue-600 font-medium hover:text-blue-700 transition-colors"
+                  >
                     <span>Learn more</span>
                     <ArrowRight size={16} className="ml-2" />
-                  </div>
+                  </button>
                 </div>
                 <div className={index % 2 === 1 ? 'lg:col-start-1' : ''}>
                   <div className="relative">
@@ -281,6 +434,72 @@ const Landing: React.FC = () => {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing Section */}
+      <section className="py-20 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              Simple, Transparent Pricing
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Choose the perfect plan for your team. All plans include a 14-day free trial with no credit card required.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {pricingPlans.map((plan, index) => (
+              <Card key={index} className={`relative hover:shadow-xl transition-all duration-300 ${
+                plan.popular ? 'ring-2 ring-blue-500 scale-105' : ''
+              }`}>
+                {plan.popular && (
+                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                    <span className="bg-blue-500 text-white px-4 py-1 rounded-full text-sm font-medium flex items-center">
+                      <Sparkles size={14} className="mr-1" />
+                      Most Popular
+                    </span>
+                  </div>
+                )}
+                <CardContent className="p-8">
+                  <div className="text-center">
+                    <div className="mb-4">{plan.icon}</div>
+                    <h3 className="text-2xl font-bold text-gray-900 mb-2">{plan.name}</h3>
+                    <p className="text-gray-600 mb-6">{plan.description}</p>
+                    <div className="mb-6">
+                      <span className="text-4xl font-bold text-gray-900">{plan.price}</span>
+                      <span className="text-gray-600 ml-2">{plan.period}</span>
+                    </div>
+                    <Button
+                      variant={plan.popular ? "primary" : "outline"}
+                      className="w-full mb-6"
+                      onClick={plan.buttonText === "Contact Sales" ? () => {} : handleGetStarted}
+                    >
+                      {plan.buttonText}
+                    </Button>
+                  </div>
+                  <ul className="space-y-3">
+                    {plan.features.map((feature, featureIndex) => (
+                      <li key={featureIndex} className="flex items-center">
+                        <CheckCircle size={16} className="text-green-500 mr-3 flex-shrink-0" />
+                        <span className="text-gray-600">{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          <div className="text-center mt-12">
+            <p className="text-gray-600 mb-4">
+              Need a custom solution? We offer enterprise packages with custom features and dedicated support.
+            </p>
+            <Button variant="outline">
+              Contact Sales Team
+            </Button>
           </div>
         </div>
       </section>
@@ -436,6 +655,31 @@ const Landing: React.FC = () => {
           </div>
         </div>
       </footer>
+
+      {/* Modal for Learn More */}
+      {selectedModal && modalContent && (
+        <Modal
+          isOpen={true}
+          onClose={closeModal}
+          title={modalContent.title}
+          size="lg"
+        >
+          <div className="space-y-4">
+            <p className="text-gray-700 leading-relaxed text-lg">
+              {modalContent.content}
+            </p>
+            <div className="flex justify-end pt-4">
+              <Button
+                variant="primary"
+                onClick={handleGetStarted}
+                icon={<ArrowRight size={16} />}
+              >
+                Get Started
+              </Button>
+            </div>
+          </div>
+        </Modal>
+      )}
     </div>
   );
 };
