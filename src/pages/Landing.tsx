@@ -70,25 +70,25 @@ const Landing: React.FC = () => {
       number: "01",
       title: "Create Your Project",
       description: "Set up your project with team members, industry details, and project specifications.",
-      image: "https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=600"
+      image: "https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=800"
     },
     {
       number: "02",
       title: "Generate AI-Powered Risks",
       description: "Let our AI analyze your project context and generate comprehensive risk assessments.",
-      image: "https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg?auto=compress&cs=tinysrgb&w=600"
+      image: "https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg?auto=compress&cs=tinysrgb&w=800"
     },
     {
       number: "03",
       title: "Develop Mitigation Strategies",
       description: "Get AI-generated mitigation strategies with detailed timelines and team responsibilities.",
-      image: "https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=600"
+      image: "https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=800"
     },
     {
       number: "04",
       title: "Monitor & Report",
       description: "Track progress, update risk statuses, and generate comprehensive reports for stakeholders.",
-      image: "https://images.pexels.com/photos/590022/pexels-photo-590022.jpg?auto=compress&cs=tinysrgb&w=600"
+      image: "https://images.pexels.com/photos/590022/pexels-photo-590022.jpg?auto=compress&cs=tinysrgb&w=800"
     }
   ];
 
@@ -271,8 +271,12 @@ const Landing: React.FC = () => {
                       src={step.image}
                       alt={step.title}
                       className="w-full h-80 object-cover rounded-2xl shadow-xl"
+                      onError={(e) => {
+                        // Fallback to a placeholder if image fails to load
+                        const target = e.target as HTMLImageElement;
+                        target.src = `https://via.placeholder.com/800x600/3B82F6/FFFFFF?text=${encodeURIComponent(step.title)}`;
+                      }}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-2xl"></div>
                   </div>
                 </div>
               </div>
