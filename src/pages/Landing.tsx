@@ -348,22 +348,18 @@ const Landing: React.FC = () => {
             Join thousands of teams already using RiskVision to deliver successful projects.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button
-              variant="secondary"
-              size="lg"
-              icon={<ArrowRight size={20} />}
+            <button
               onClick={handleGetStarted}
-              className="text-lg px-8 py-4 bg-white text-blue-600 hover:bg-gray-50"
+              className="inline-flex items-center justify-center px-8 py-4 text-lg font-medium rounded-md bg-white text-blue-600 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white transition-colors"
             >
+              <ArrowRight size={20} className="mr-2" />
               Start Your Free Trial
-            </Button>
-            <Button
-              variant="outline"
-              size="lg"
-              className="text-lg px-8 py-4 border-white text-white hover:bg-white hover:text-blue-600"
+            </button>
+            <button
+              className="inline-flex items-center justify-center px-8 py-4 text-lg font-medium rounded-md border-2 border-white text-white hover:bg-white hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white transition-colors"
             >
               Schedule Demo
-            </Button>
+            </button>
           </div>
           <p className="text-blue-100 text-sm mt-4">
             No credit card required • 14-day free trial • Cancel anytime
