@@ -465,19 +465,18 @@ const Contact: React.FC = () => {
             Join thousands of teams using RiskVision to manage project risks effectively.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button
-              variant="outline"
-              className="bg-white text-blue-600 hover:bg-gray-50 border-white"
+            <button
               onClick={() => navigate('/auth')}
+              className="inline-flex items-center justify-center px-8 py-4 text-lg font-medium rounded-md bg-white text-gray-900 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white transition-colors"
             >
               Start Free Trial
-            </Button>
-            <Button
-              variant="outline"
-              className="border-white text-white hover:bg-white hover:text-blue-600"
+            </button>
+            <button
+              onClick={() => navigate('/contact')}
+              className="inline-flex items-center justify-center px-8 py-4 text-lg font-medium rounded-md border-2 border-white text-white hover:bg-white hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white transition-colors"
             >
               Schedule Demo
-            </Button>
+            </button>
           </div>
         </div>
       </div>
