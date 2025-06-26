@@ -113,7 +113,7 @@ const Profile: React.FC = () => {
 
     try {
       await deleteAccount(deleteConfirmation.password);
-      navigate('/auth');
+      navigate('/');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to delete account');
     } finally {

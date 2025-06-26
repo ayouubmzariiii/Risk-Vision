@@ -33,7 +33,7 @@ const ProjectDashboard: React.FC = () => {
             <CardContent className="p-8 text-center">
               <h2 className="text-xl font-semibold mb-4">Project Not Found</h2>
               <p className="text-gray-500 mb-6">The project you're looking for doesn't exist or has been deleted.</p>
-              <Button variant="primary" onClick={() => navigate('/')}>
+              <Button variant="primary" onClick={() => navigate('/dashboard')}>
                 Return to Projects
               </Button>
             </CardContent>
@@ -56,7 +56,7 @@ const ProjectDashboard: React.FC = () => {
                       variant="outline"
                       size="sm"
                       icon={<ArrowLeft size={16} />}
-                      onClick={() => navigate('/')}
+                      onClick={() => navigate('/dashboard')}
                     >
                       Back to Projects
                     </Button>

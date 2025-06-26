@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import Button from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Card, CardContent, CardHeader } from '../components/ui/Card';
+import ProfileDropdown from '../components/profile/ProfileDropdown';
 import { 
   Shield, 
   Mail, 
@@ -20,6 +22,7 @@ import {
 
 const Contact: React.FC = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -150,13 +153,13 @@ const Contact: React.FC = () => {
             <Button
               variant="outline"
               icon={<ArrowLeft size={16} />}
-              onClick={() => navigate('/landing')}
+              onClick={() => navigate('/')}
               className="mr-4"
             >
               Back
             </Button>
             <button 
-              onClick={() => navigate('/landing')}
+              onClick={() => navigate('/')}
               className="flex items-center hover:opacity-80 transition-opacity"
             >
               <Shield className="h-8 w-8 text-blue-600" />
@@ -164,18 +167,32 @@ const Contact: React.FC = () => {
             </button>
           </div>
           <div className="flex items-center space-x-4">
-            <Button
-              variant="outline"
-              onClick={() => navigate('/auth')}
-            >
-              Sign In
-            </Button>
-            <Button
-              variant="primary"
-              onClick={() => navigate('/auth')}
-            >
-              Get Started
-            </Button>
+            {user ? (
+              <>
+                <Button
+                  variant="primary"
+                  onClick={() => navigate('/dashboard')}
+                >
+                  Go to Dashboard
+                </Button>
+                <ProfileDropdown />
+              </>
+            ) : (
+              <>
+                <Button
+                  variant="outline"
+                  onClick={() => navigate('/auth')}
+                >
+                  Sign In
+                </Button>
+                <Button
+                  variant="primary"
+                  onClick={() => navigate('/auth')}
+                >
+                  Get Started
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </header>
@@ -506,8 +523,8 @@ const Contact: React.FC = () => {
             <div>
               <h4 className="font-semibold mb-4">Product</h4>
               <ul className="space-y-2 text-gray-400">
-                <li><button onClick={() => navigate('/landing#features')} className="hover:text-white transition-colors">Features</button></li>
-                <li><button onClick={() => navigate('/landing#pricing')} className="hover:text-white transition-colors">Pricing</button></li>
+                <li><button onClick={() => navigate('/#features')} className="hover:text-white transition-colors">Features</button></li>
+                <li><button onClick={() => navigate('/#pricing')} className="hover:text-white transition-colors">Pricing</button></li>
                 <li><a href="#" className="hover:text-white transition-colors">Security</a></li>
                 <li><a href="#" className="hover:text-white transition-colors">Integrations</a></li>
               </ul>

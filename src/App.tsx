@@ -1,7 +1,7 @@
 import React from 'react';
 import { ProjectProvider } from './context/ProjectContext';
 import { AuthProvider } from './context/AuthContext';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import ProjectDashboard from './pages/ProjectDashboard';
 import Tasks from './pages/Tasks';
@@ -11,33 +11,6 @@ import Landing from './pages/Landing';
 import Contact from './pages/Contact';
 import FAQ from './pages/FAQ';
 import PrivateRoute from './components/auth/PrivateRoute';
-import { useAuth } from './context/AuthContext';
-
-const AppRoutes: React.FC = () => {
-  const { user } = useAuth();
-
-  return (
-    <Routes>
-      <Route path="/landing" element={<Landing />} />
-      <Route path="/contact" element={<Contact />} />
-      <Route path="/faq" element={<FAQ />} />
-      <Route path="/auth" element={<Auth />} />
-      <Route 
-        path="/" 
-        element={
-          user ? (
-            <PrivateRoute><Home /></PrivateRoute>
-          ) : (
-            <Navigate to="/landing" replace />
-          )
-        } 
-      />
-      <Route path="/tasks" element={<PrivateRoute><Tasks /></PrivateRoute>} />
-      <Route path="/project/:id" element={<PrivateRoute><ProjectDashboard /></PrivateRoute>} />
-      <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
-    </Routes>
-  );
-};
 
 function App() {
   return (
@@ -46,7 +19,19 @@ function App() {
         <Router>
           <div className="min-h-screen bg-gray-100 flex flex-col">
             <main className="flex-1">
-              <AppRoutes />
+              <Routes>
+                {/* Public Routes */}
+                <Route path="/" element={<Landing />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/faq" element={<FAQ />} />
+                <Route path="/auth" element={<Auth />} />
+                
+                {/* Dashboard Routes (Protected) */}
+                <Route path="/dashboard" element={<PrivateRoute><Home /></PrivateRoute>} />
+                <Route path="/dashboard/tasks" element={<PrivateRoute><Tasks /></PrivateRoute>} />
+                <Route path="/dashboard/project/:id" element={<PrivateRoute><ProjectDashboard /></PrivateRoute>} />
+                <Route path="/dashboard/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
+              </Routes>
             </main>
             
             <footer className="bg-white shadow-inner mt-auto py-6">

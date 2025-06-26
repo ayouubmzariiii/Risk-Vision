@@ -15,7 +15,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
       <header className="bg-white shadow">
         <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 flex items-center justify-between">
           <button 
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/dashboard')}
             className="flex items-center group hover:opacity-90 transition-opacity"
           >
             <Shield className="h-8 w-8 text-blue-600" />
@@ -23,13 +23,13 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
           </button>
           <nav className="hidden md:flex items-center space-x-6">
             <Link 
-              to="/" 
+              to="/dashboard" 
               className="text-gray-700 hover:text-blue-600 transition-colors font-medium"
             >
               Projects
             </Link>
             <Link 
-              to="/tasks" 
+              to="/dashboard/tasks" 
               className="text-gray-700 hover:text-blue-600 transition-colors font-medium"
             >
               My Tasks

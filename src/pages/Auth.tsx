@@ -12,7 +12,7 @@ const Auth: React.FC = () => {
   const { user } = useAuth();
 
   if (user) {
-    navigate('/');
+    navigate('/dashboard');
     return null;
   }
 
@@ -23,7 +23,7 @@ const Auth: React.FC = () => {
         <Button
           variant="outline"
           icon={<ArrowLeft size={16} />}
-          onClick={() => navigate('/landing')}
+          onClick={() => navigate('/')}
         >
           Back to Home
         </Button>
@@ -76,7 +76,7 @@ const Auth: React.FC = () => {
           <CardContent className="p-8">
             <AuthForm
               mode={mode}
-              onSuccess={() => navigate('/')}
+              onSuccess={() => navigate('/dashboard')}
             />
           </CardContent>
         </Card>

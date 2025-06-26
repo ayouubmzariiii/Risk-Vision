@@ -33,7 +33,7 @@ const Landing: React.FC = () => {
 
   const handleGetStarted = () => {
     if (user) {
-      navigate('/');
+      navigate('/dashboard');
     } else {
       navigate('/auth');
     }
@@ -266,7 +266,7 @@ const Landing: React.FC = () => {
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 flex items-center justify-between">
           <button 
-            onClick={() => navigate('/landing')}
+            onClick={() => navigate('/')}
             className="flex items-center hover:opacity-80 transition-opacity"
           >
             <Shield className="h-8 w-8 text-blue-600" />
@@ -292,10 +292,10 @@ const Landing: React.FC = () => {
             {user ? (
               <>
                 <Button
-                  variant="outline"
-                  onClick={() => navigate('/')}
+                  variant="primary"
+                  onClick={() => navigate('/dashboard')}
                 >
-                  Dashboard
+                  Go to Dashboard
                 </Button>
                 <ProfileDropdown />
               </>
