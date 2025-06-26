@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import Button from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Card, CardContent, CardHeader } from '../components/ui/Card';
-import AppLayout from '../components/layout/AppLayout';
 import { 
   Shield, 
   Mail, 
@@ -156,8 +155,13 @@ const Contact: React.FC = () => {
             >
               Back
             </Button>
-            <Shield className="h-8 w-8 text-blue-600" />
-            <h1 className="ml-2 text-xl font-bold text-gray-900">RiskVision</h1>
+            <button 
+              onClick={() => navigate('/landing')}
+              className="flex items-center hover:opacity-80 transition-opacity"
+            >
+              <Shield className="h-8 w-8 text-blue-600" />
+              <h1 className="ml-2 text-xl font-bold text-gray-900">RiskVision</h1>
+            </button>
           </div>
           <div className="flex items-center space-x-4">
             <Button
@@ -371,10 +375,13 @@ const Contact: React.FC = () => {
                     <Globe className="w-4 h-4 mr-2" />
                     Documentation
                   </a>
-                  <a href="#" className="flex items-center text-blue-600 hover:text-blue-700 transition-colors">
+                  <button 
+                    onClick={() => navigate('/faq')}
+                    className="flex items-center text-blue-600 hover:text-blue-700 transition-colors"
+                  >
                     <Globe className="w-4 h-4 mr-2" />
-                    Community Forum
-                  </a>
+                    FAQ
+                  </button>
                   <a href="#" className="flex items-center text-blue-600 hover:text-blue-700 transition-colors">
                     <Globe className="w-4 h-4 mr-2" />
                     System Status
@@ -440,7 +447,10 @@ const Contact: React.FC = () => {
             <p className="text-gray-600 mb-4">
               Can't find what you're looking for?
             </p>
-            <Button variant="outline">
+            <Button 
+              variant="outline"
+              onClick={() => navigate('/faq')}
+            >
               View All FAQs
             </Button>
           </div>
@@ -471,6 +481,72 @@ const Contact: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Footer */}
+      <footer className="bg-gray-900 text-white py-12 mt-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div>
+              <div className="flex items-center mb-4">
+                <Shield className="h-8 w-8 text-blue-400" />
+                <h3 className="ml-2 text-xl font-bold">RiskVision</h3>
+              </div>
+              <p className="text-gray-400 mb-4">
+                Intelligent risk management for modern teams. Powered by AI, built for collaboration.
+              </p>
+              <div className="flex items-center space-x-2">
+                <span className="text-gray-400 text-sm">Sponsored by</span>
+                <img 
+                  src="/black_logo.png" 
+                  alt="Sponsor Logo" 
+                  className="h-6 w-auto opacity-70"
+                />
+              </div>
+            </div>
+            
+            <div>
+              <h4 className="font-semibold mb-4">Product</h4>
+              <ul className="space-y-2 text-gray-400">
+                <li><button onClick={() => navigate('/landing#features')} className="hover:text-white transition-colors">Features</button></li>
+                <li><button onClick={() => navigate('/landing#pricing')} className="hover:text-white transition-colors">Pricing</button></li>
+                <li><a href="#" className="hover:text-white transition-colors">Security</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Integrations</a></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h4 className="font-semibold mb-4">Company</h4>
+              <ul className="space-y-2 text-gray-400">
+                <li><a href="#" className="hover:text-white transition-colors">About</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Blog</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Careers</a></li>
+                <li><button onClick={() => navigate('/contact')} className="hover:text-white transition-colors">Contact</button></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h4 className="font-semibold mb-4">Support</h4>
+              <ul className="space-y-2 text-gray-400">
+                <li><a href="#" className="hover:text-white transition-colors">Documentation</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Help Center</a></li>
+                <li><button onClick={() => navigate('/faq')} className="hover:text-white transition-colors">FAQ</button></li>
+                <li><a href="#" className="hover:text-white transition-colors">Status</a></li>
+              </ul>
+            </div>
+          </div>
+          
+          <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
+            <p className="text-gray-400 text-sm">
+              © {new Date().getFullYear()} RiskVision. All rights reserved.
+            </p>
+            <div className="flex space-x-6 mt-4 md:mt-0">
+              <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">Privacy Policy</a>
+              <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">Terms of Service</a>
+              <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">Cookie Policy</a>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };

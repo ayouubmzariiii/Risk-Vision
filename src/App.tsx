@@ -9,6 +9,7 @@ import Auth from './pages/Auth';
 import Profile from './pages/Profile';
 import Landing from './pages/Landing';
 import Contact from './pages/Contact';
+import FAQ from './pages/FAQ';
 import PrivateRoute from './components/auth/PrivateRoute';
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
               <Routes>
                 <Route path="/landing" element={<Landing />} />
                 <Route path="/contact" element={<Contact />} />
+                <Route path="/faq" element={<FAQ />} />
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/" element={<PrivateRoute><Home /></PrivateRoute>} />
                 <Route path="/tasks" element={<PrivateRoute><Tasks /></PrivateRoute>} />

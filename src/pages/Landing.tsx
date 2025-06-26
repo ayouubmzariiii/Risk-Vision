@@ -264,10 +264,13 @@ const Landing: React.FC = () => {
       {/* Header */}
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 flex items-center justify-between">
-          <div className="flex items-center">
+          <button 
+            onClick={() => navigate('/landing')}
+            className="flex items-center hover:opacity-80 transition-opacity"
+          >
             <Shield className="h-8 w-8 text-blue-600" />
             <h1 className="ml-2 text-xl font-bold text-gray-900">RiskVision</h1>
-          </div>
+          </button>
           <nav className="hidden md:flex items-center space-x-8">
             <a href="#features" className="text-gray-700 hover:text-blue-600 transition-colors">Features</a>
             <a href="#pricing" className="text-gray-700 hover:text-blue-600 transition-colors">Pricing</a>
@@ -276,6 +279,12 @@ const Landing: React.FC = () => {
               className="text-gray-700 hover:text-blue-600 transition-colors"
             >
               Contact
+            </button>
+            <button 
+              onClick={() => navigate('/faq')}
+              className="text-gray-700 hover:text-blue-600 transition-colors"
+            >
+              FAQ
             </button>
           </nav>
           <div className="flex items-center space-x-4">
@@ -651,7 +660,7 @@ const Landing: React.FC = () => {
               <ul className="space-y-2 text-gray-400">
                 <li><a href="#" className="hover:text-white transition-colors">Documentation</a></li>
                 <li><a href="#" className="hover:text-white transition-colors">Help Center</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Community</a></li>
+                <li><button onClick={() => navigate('/faq')} className="hover:text-white transition-colors">FAQ</button></li>
                 <li><a href="#" className="hover:text-white transition-colors">Status</a></li>
               </ul>
             </div>
