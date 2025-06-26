@@ -268,6 +268,16 @@ const Landing: React.FC = () => {
             <Shield className="h-8 w-8 text-blue-600" />
             <h1 className="ml-2 text-xl font-bold text-gray-900">RiskVision</h1>
           </div>
+          <nav className="hidden md:flex items-center space-x-8">
+            <a href="#features" className="text-gray-700 hover:text-blue-600 transition-colors">Features</a>
+            <a href="#pricing" className="text-gray-700 hover:text-blue-600 transition-colors">Pricing</a>
+            <button 
+              onClick={() => navigate('/contact')}
+              className="text-gray-700 hover:text-blue-600 transition-colors"
+            >
+              Contact
+            </button>
+          </nav>
           <div className="flex items-center space-x-4">
             <Button
               variant="outline"
@@ -351,7 +361,7 @@ const Landing: React.FC = () => {
       </section>
 
       {/* Features Section */}
-      <section className="py-20 bg-gray-50">
+      <section id="features" className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
@@ -439,7 +449,7 @@ const Landing: React.FC = () => {
       </section>
 
       {/* Pricing Section */}
-      <section className="py-20 bg-gray-50">
+      <section id="pricing" className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
@@ -475,7 +485,7 @@ const Landing: React.FC = () => {
                     <Button
                       variant={plan.popular ? "primary" : "outline"}
                       className="w-full mb-6"
-                      onClick={plan.buttonText === "Contact Sales" ? () => {} : handleGetStarted}
+                      onClick={plan.buttonText === "Contact Sales" ? () => navigate('/contact') : handleGetStarted}
                     >
                       {plan.buttonText}
                     </Button>
@@ -497,7 +507,10 @@ const Landing: React.FC = () => {
             <p className="text-gray-600 mb-4">
               Need a custom solution? We offer enterprise packages with custom features and dedicated support.
             </p>
-            <Button variant="outline">
+            <Button 
+              variant="outline"
+              onClick={() => navigate('/contact')}
+            >
               Contact Sales Team
             </Button>
           </div>
@@ -579,6 +592,7 @@ const Landing: React.FC = () => {
               Start Your Free Trial
             </button>
             <button
+              onClick={() => navigate('/contact')}
               className="inline-flex items-center justify-center px-8 py-4 text-lg font-medium rounded-md border-2 border-white text-white hover:bg-white hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white transition-colors"
             >
               Schedule Demo
@@ -615,8 +629,8 @@ const Landing: React.FC = () => {
             <div>
               <h4 className="font-semibold mb-4">Product</h4>
               <ul className="space-y-2 text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">Features</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Pricing</a></li>
+                <li><a href="#features" className="hover:text-white transition-colors">Features</a></li>
+                <li><a href="#pricing" className="hover:text-white transition-colors">Pricing</a></li>
                 <li><a href="#" className="hover:text-white transition-colors">Security</a></li>
                 <li><a href="#" className="hover:text-white transition-colors">Integrations</a></li>
               </ul>
@@ -628,7 +642,7 @@ const Landing: React.FC = () => {
                 <li><a href="#" className="hover:text-white transition-colors">About</a></li>
                 <li><a href="#" className="hover:text-white transition-colors">Blog</a></li>
                 <li><a href="#" className="hover:text-white transition-colors">Careers</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Contact</a></li>
+                <li><button onClick={() => navigate('/contact')} className="hover:text-white transition-colors">Contact</button></li>
               </ul>
             </div>
             
