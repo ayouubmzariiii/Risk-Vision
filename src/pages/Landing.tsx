@@ -88,7 +88,7 @@ const Landing: React.FC = () => {
       number: "04",
       title: "Monitor & Report",
       description: "Track progress, update risk statuses, and generate comprehensive reports for stakeholders.",
-      image: "https://images.pexels.com/photos/590022/pexels-photo-590022.jpg?auto=compress&cs=tinysrgb&w=800"
+      image: "https://images.pexels.com/photos/669610/pexels-photo-669610.jpeg?auto=compress&cs=tinysrgb&w=800"
     }
   ];
 
