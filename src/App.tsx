@@ -7,6 +7,7 @@ import ProjectDashboard from './pages/ProjectDashboard';
 import Tasks from './pages/Tasks';
 import Auth from './pages/Auth';
 import Profile from './pages/Profile';
+import Landing from './pages/Landing';
 import PrivateRoute from './components/auth/PrivateRoute';
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
           <div className="min-h-screen bg-gray-100 flex flex-col">
             <main className="flex-1">
               <Routes>
+                <Route path="/landing" element={<Landing />} />
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/" element={<PrivateRoute><Home /></PrivateRoute>} />
                 <Route path="/tasks" element={<PrivateRoute><Tasks /></PrivateRoute>} />

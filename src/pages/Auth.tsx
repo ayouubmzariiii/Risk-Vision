@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import AuthForm from '../components/auth/AuthForm';
 import { Card, CardContent } from '../components/ui/Card';
-import { Shield } from 'lucide-react';
+import { Shield, ArrowLeft } from 'lucide-react';
+import Button from '../components/ui/Button';
 
 const Auth: React.FC = () => {
   const [mode, setMode] = useState<'signin' | 'signup'>('signin');
@@ -17,6 +18,17 @@ const Auth: React.FC = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-gray-50 relative">
+      {/* Back to Landing Button */}
+      <div className="absolute top-6 left-6">
+        <Button
+          variant="outline"
+          icon={<ArrowLeft size={16} />}
+          onClick={() => navigate('/landing')}
+        >
+          Back to Home
+        </Button>
+      </div>
+
       {/* Sponsor Logo - Top Right */}
       <div className="absolute top-6 right-6">
         <div className="flex items-center space-x-2 bg-white rounded-lg shadow-sm px-3 py-2">
