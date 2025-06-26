@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import Button from '../components/ui/Button';
 import Modal from '../components/ui/Modal';
 import { Card, CardContent } from '../components/ui/Card';
+import ProfileDropdown from '../components/profile/ProfileDropdown';
 import { 
   Shield, 
   Brain, 
@@ -288,18 +289,32 @@ const Landing: React.FC = () => {
             </button>
           </nav>
           <div className="flex items-center space-x-4">
-            <Button
-              variant="outline"
-              onClick={() => navigate('/auth')}
-            >
-              Sign In
-            </Button>
-            <Button
-              variant="primary"
-              onClick={handleGetStarted}
-            >
-              Get Started
-            </Button>
+            {user ? (
+              <>
+                <Button
+                  variant="outline"
+                  onClick={() => navigate('/')}
+                >
+                  Dashboard
+                </Button>
+                <ProfileDropdown />
+              </>
+            ) : (
+              <>
+                <Button
+                  variant="outline"
+                  onClick={() => navigate('/auth')}
+                >
+                  Sign In
+                </Button>
+                <Button
+                  variant="primary"
+                  onClick={handleGetStarted}
+                >
+                  Get Started
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </header>
@@ -330,7 +345,7 @@ const Landing: React.FC = () => {
                   onClick={handleGetStarted}
                   className="text-lg px-8 py-4"
                 >
-                  Start Free Trial
+                  {user ? 'Go to Dashboard' : 'Start Free Trial'}
                 </Button>
                 <Button
                   variant="outline"
@@ -598,7 +613,7 @@ const Landing: React.FC = () => {
               className="inline-flex items-center justify-center px-8 py-4 text-lg font-medium rounded-md bg-white text-gray-900 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white transition-colors"
             >
               <ArrowRight size={20} className="mr-2" />
-              Start Your Free Trial
+              {user ? 'Go to Dashboard' : 'Start Your Free Trial'}
             </button>
             <button
               onClick={() => navigate('/contact')}
@@ -697,7 +712,7 @@ const Landing: React.FC = () => {
                 onClick={handleGetStarted}
                 icon={<ArrowRight size={16} />}
               >
-                Get Started
+                {user ? 'Go to Dashboard' : 'Get Started'}
               </Button>
             </div>
           </div>
