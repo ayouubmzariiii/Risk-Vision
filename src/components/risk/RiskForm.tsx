@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Risk, RiskCategory, RiskStatus } from '../../types';
 import { useProjects } from '../../context/ProjectContext';
+import { useAuth } from '../../context/AuthContext';
 import Button from '../ui/Button';
 import { Input } from '../ui/Input';
 import { Save } from 'lucide-react';
@@ -30,6 +31,7 @@ const RISK_STATUSES: RiskStatus[] = ['open', 'mitigated', 'closed'];
 
 const RiskForm: React.FC<RiskFormProps> = ({ initialRisk, onComplete, onCancel }) => {
   const { addRisk, updateRisk, calculateRiskPriority, currentProject } = useProjects();
+  const { user } = useAuth();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState<RiskCategory>('technical');
@@ -127,6 +129,13 @@ const RiskForm: React.FC<RiskFormProps> = ({ initialRisk, onComplete, onCancel }
   const handleRemoveAssignee = (email: string) => {
     setAssignedTo(assignedTo.filter(assignee => assignee !== email));
   };
+
+  // Check if current user is a manager
+  const isManager = useMemo(() => {
+    if (!user || !currentProject?.teamMembersData) return false;
+    const currentUserMember = currentProject.teamMembersData.find(member => member.email === user.email);
+    return currentUserMember?.role === 'manager';
+  }, [user, currentProject?.teamMembersData]);
 
   // Get available team members for autocomplete
   const getAvailableTeamMembers = () => {
@@ -240,15 +249,28 @@ const RiskForm: React.FC<RiskFormProps> = ({ initialRisk, onComplete, onCancel }
           </div>
         </div>
 
-        <EmailAutocomplete
-          selectedEmails={assignedTo}
-          onSelect={handleAddAssignee}
-          onRemove={handleRemoveAssignee}
-          label="Assigned To"
-          placeholder="Type email or name to search team members"
-          maxSelections={1}
-          availableEmails={getAvailableTeamMembers()}
-        />
+        {isManager && (
+          <EmailAutocomplete
+            selectedEmails={assignedTo}
+            onSelect={handleAddAssignee}
+            onRemove={handleRemoveAssignee}
+            label="Assigned To"
+            placeholder="Type email or name to search team members"
+            maxSelections={1}
+            availableEmails={getAvailableTeamMembers()}
+          />
+        )}
+        
+        {!isManager && assignedTo.length > 0 && (
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Assigned To
+            </label>
+            <div className="mt-1 p-2 bg-gray-50 border border-gray-300 rounded-md text-sm text-gray-600">
+              {assignedTo[0]}
+            </div>
+          </div>
+        )}
 
         <div>
           <label htmlFor="tags" className="block text-sm font-medium text-gray-700 mb-1">

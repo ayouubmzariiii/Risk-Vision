@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useProjects } from '../../context/ProjectContext';
 import { useAuth } from '../../context/AuthContext';
 import Button from '../ui/Button';
-import { Wand2, Users, Edit2, Check, X, Loader } from 'lucide-react';
+import { Wand2, Users, Edit2, Check, X, Loader, Trash2 } from 'lucide-react';
 import { RiskCategory, TeamMember } from '../../types';
 import { Card, CardContent, CardHeader } from '../ui/Card';
 import { Input } from '../ui/Input';
@@ -23,6 +23,11 @@ const RiskGenerator: React.FC<{ onComplete?: () => void }> = ({ onComplete }) =>
   const [teamMembersData, setTeamMembersData] = useState<TeamMember[]>([]);
   const [loadingTeamMembers, setLoadingTeamMembers] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [showAddMember, setShowAddMember] = useState(false);
+  const [newMemberName, setNewMemberName] = useState('');
+  const [newMemberEmail, setNewMemberEmail] = useState('');
+  const [newMemberJobTitle, setNewMemberJobTitle] = useState('');
+  const [addingMember, setAddingMember] = useState(false);
 
   // Additional fields
   const [country, setCountry] = useState('');
@@ -33,46 +38,14 @@ const RiskGenerator: React.FC<{ onComplete?: () => void }> = ({ onComplete }) =>
   const [regulations, setRegulations] = useState('');
 
   useEffect(() => {
-    const loadTeamMembersData = async () => {
-      if (!currentProject?.teamMembers?.length) return;
-
-      setLoadingTeamMembers(true);
-      try {
-        const usersRef = collection(db, 'users');
-        const q = query(usersRef, where('email', 'in', currentProject.teamMembers));
-        const querySnapshot = await getDocs(q);
-        
-        const membersData = currentProject.teamMembers.map(email => {
-          const userDoc = querySnapshot.docs.find(doc => doc.data().email === email);
-          if (userDoc) {
-            const userData = userDoc.data();
-            return {
-              email,
-              displayName: userData.displayName || email,
-              jobTitle: userData.jobTitle || 'No job title',
-              department: userData.department || 'No department',
-              projectRole: userData.projectRole || ''
-            };
-          }
-          return {
-            email,
-            displayName: email,
-            jobTitle: 'No job title',
-            department: 'No department',
-            projectRole: ''
-          };
-        });
-
-        setTeamMembersData(membersData);
-      } catch (err) {
-        console.error('Error loading team members:', err);
-      } finally {
-        setLoadingTeamMembers(false);
-      }
-    };
-
-    loadTeamMembersData();
-  }, [currentProject?.teamMembers]);
+    if (currentProject?.teamMembersData) {
+      setTeamMembersData(currentProject.teamMembersData);
+      setLoadingTeamMembers(false);
+    } else {
+      setTeamMembersData([]);
+      setLoadingTeamMembers(false);
+    }
+  }, [currentProject?.teamMembersData]);
 
   const RISK_CATEGORIES: RiskCategory[] = [
     'technical',
@@ -123,13 +96,80 @@ const RiskGenerator: React.FC<{ onComplete?: () => void }> = ({ onComplete }) =>
 
     await updateProject({
       ...currentProject,
-      teamMembers: updatedTeamMembers
+      teamMembersData: updatedTeamMembers
     });
   };
 
   const handleCancelEdit = () => {
     setEditingMember(null);
     setEditedRole('');
+  };
+
+  const handleAddMember = async () => {
+    if (!currentProject || !newMemberName.trim() || !newMemberEmail.trim()) return;
+
+    setAddingMember(true);
+    try {
+      const newMember: TeamMember = {
+        email: newMemberEmail.trim(),
+        displayName: newMemberName.trim(),
+        jobTitle: newMemberJobTitle.trim() || 'Team Member',
+        projectRole: newMemberJobTitle.trim() || 'Team Member',
+        role: 'worker'
+      };
+
+      const updatedTeamMembersData = [...teamMembersData, newMember];
+      setTeamMembersData(updatedTeamMembersData);
+
+      // Update the project with new team member
+      const updatedProject = {
+        ...currentProject,
+        teamMembers: [...(currentProject.teamMembers || []), newMemberEmail.trim()],
+        teamMembersData: updatedTeamMembersData
+      };
+
+      await updateProject(updatedProject);
+
+      // Reset form
+      setNewMemberName('');
+      setNewMemberEmail('');
+      setNewMemberJobTitle('');
+      setShowAddMember(false);
+    } catch (error) {
+      console.error('Error adding team member:', error);
+    } finally {
+      setAddingMember(false);
+    }
+  };
+
+  const handleCancelAddMember = () => {
+    setNewMemberName('');
+    setNewMemberEmail('');
+    setNewMemberJobTitle('');
+    setShowAddMember(false);
+  };
+
+  const handleRemoveMember = async (memberEmail: string) => {
+    if (!currentProject || !memberEmail) return;
+
+    try {
+      // Filter out the member from both arrays
+      const updatedTeamMembersData = teamMembersData.filter(member => member.email !== memberEmail);
+      const updatedTeamMembers = currentProject.teamMembers?.filter(email => email !== memberEmail) || [];
+
+      setTeamMembersData(updatedTeamMembersData);
+
+      // Update the project
+      const updatedProject = {
+        ...currentProject,
+        teamMembers: updatedTeamMembers,
+        teamMembersData: updatedTeamMembersData
+      };
+
+      await updateProject(updatedProject);
+    } catch (error) {
+      console.error('Error removing team member:', error);
+    }
   };
 
 
@@ -187,18 +227,35 @@ const RiskGenerator: React.FC<{ onComplete?: () => void }> = ({ onComplete }) =>
             </div>
           ) : teamMembersData.length > 0 ? (
             <div className="bg-gray-50 rounded-lg p-4">
-              <div className="flex items-center mb-3">
-                <Users size={16} className="text-blue-600 mr-2" />
-                <h3 className="text-sm font-medium text-gray-900">Project Team</h3>
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center">
+                  <Users size={16} className="text-blue-600 mr-2" />
+                  <h3 className="text-sm font-medium text-gray-900">Project Team</h3>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowAddMember(true)}
+                >
+                  Add Member
+                </Button>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {teamMembersData.map((member) => (
-                  <div key={member.email} className="bg-white p-3 rounded-lg shadow-sm">
+                  <div key={member.email} className="bg-white p-3 rounded-lg shadow-sm border">
                     <div className="flex items-start justify-between">
                       <div className="min-w-0 flex-1">
-                        <div className="font-medium text-sm truncate">{member.displayName}</div>
-                        <div className="text-xs text-gray-500">{member.jobTitle}</div>
-                        <div className="text-xs text-gray-400">{member.department}</div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <div className="font-medium text-sm truncate">{member.displayName}</div>
+                          <span className={`px-2 py-1 text-xs rounded-full ${
+                            member.role === 'manager' 
+                              ? 'bg-blue-100 text-blue-800' 
+                              : 'bg-green-100 text-green-800'
+                          }`}>
+                            {member.role === 'manager' ? 'Manager' : 'Worker'}
+                          </span>
+                        </div>
+                        <div className="text-xs text-gray-500 mb-2">{member.email}</div>
                         {editingMember === member.email ? (
                           <div className="mt-2 flex items-center space-x-2">
                             <Input
@@ -221,17 +278,27 @@ const RiskGenerator: React.FC<{ onComplete?: () => void }> = ({ onComplete }) =>
                             />
                           </div>
                         ) : (
-                          <div className="mt-1 flex items-center">
+                          <div className="mt-1 flex items-center justify-between">
                             <span className="text-xs text-gray-600">
-                              {member.projectRole || 'No project role assigned'}
+                              {member.projectRole || member.jobTitle}
                             </span>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              icon={<Edit2 size={14} />}
-                              onClick={() => handleEditRole(member)}
-                              className="ml-2"
-                            />
+                            <div className="flex items-center space-x-1">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                icon={<Edit2 size={14} />}
+                                onClick={() => handleEditRole(member)}
+                              />
+                              {member.role !== 'manager' && (
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  icon={<Trash2 size={14} />}
+                                  onClick={() => handleRemoveMember(member.email)}
+                                  className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                                />
+                              )}
+                            </div>
                           </div>
                         )}
                       </div>
@@ -420,6 +487,56 @@ const RiskGenerator: React.FC<{ onComplete?: () => void }> = ({ onComplete }) =>
               onClick={handleCancelGeneration}
             >
               Cancel
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
+      <Modal
+        isOpen={showAddMember}
+        onClose={handleCancelAddMember}
+        title="Add Team Member"
+      >
+        <div className="p-6 space-y-4">
+          <Input
+            label="Name"
+            value={newMemberName}
+            onChange={(e) => setNewMemberName(e.target.value)}
+            placeholder="Enter member name"
+            required
+          />
+          
+          <Input
+            label="Email"
+            type="email"
+            value={newMemberEmail}
+            onChange={(e) => setNewMemberEmail(e.target.value)}
+            placeholder="Enter member email"
+            required
+          />
+          
+          <Input
+            label="Job Title"
+            value={newMemberJobTitle}
+            onChange={(e) => setNewMemberJobTitle(e.target.value)}
+            placeholder="Enter job title (optional)"
+          />
+          
+          <div className="flex justify-end space-x-3 pt-4">
+            <Button
+              variant="outline"
+              onClick={handleCancelAddMember}
+              disabled={addingMember}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="primary"
+              onClick={handleAddMember}
+              isLoading={addingMember}
+              disabled={!newMemberName.trim() || !newMemberEmail.trim() || addingMember}
+            >
+              Add Member
             </Button>
           </div>
         </div>

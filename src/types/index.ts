@@ -25,11 +25,14 @@ export interface UserProfile {
   updatedAt: Date;
 }
 
+export type UserRole = 'manager' | 'worker';
+
 export interface TeamMember {
   email: string;
   displayName: string;
   jobTitle: string;
   projectRole?: string;
+  role: UserRole;
 }
 
 export interface MitigationStrategy {
@@ -59,7 +62,8 @@ export interface Project {
   id: string;
   name: string;
   description: string;
-  teamMembers: TeamMember[];
+  teamMembers: string[]; // Email array for queries
+  teamMembersData?: TeamMember[]; // Detailed member data
   createdAt: Date;
   updatedAt: Date;
   risks: Risk[];

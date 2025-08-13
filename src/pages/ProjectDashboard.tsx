@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useProjects } from '../context/ProjectContext';
+import { useAuth } from '../context/AuthContext';
 import { Card, CardHeader, CardContent } from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import Modal from '../components/ui/Modal';
@@ -16,8 +17,16 @@ const ProjectDashboard: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { projects, selectProject, currentProject } = useProjects();
+  const { user } = useAuth();
   const [newRiskModalOpen, setNewRiskModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'risks' | 'generate' | 'matrix' | 'export'>('risks');
+
+  // Check if current user is a manager
+  const isManager = useMemo(() => {
+    if (!user || !currentProject?.teamMembersData) return false;
+    const currentUserMember = currentProject.teamMembersData.find(member => member.email === user.email);
+    return currentUserMember?.role === 'manager';
+  }, [user, currentProject?.teamMembersData]);
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -78,13 +87,15 @@ const ProjectDashboard: React.FC = () => {
                   >
                     Risks
                   </Button>
-                  <Button
-                    variant={activeTab === 'generate' ? 'primary' : 'outline'}
-                    icon={<Wand2 size={16} />}
-                    onClick={() => setActiveTab('generate')}
-                  >
-                    Generate Risks
-                  </Button>
+                  {isManager && (
+                    <Button
+                      variant={activeTab === 'generate' ? 'primary' : 'outline'}
+                      icon={<Wand2 size={16} />}
+                      onClick={() => setActiveTab('generate')}
+                    >
+                      Generate Risks
+                    </Button>
+                  )}
                   <Button
                     variant={activeTab === 'matrix' ? 'primary' : 'outline'}
                     icon={<BarChart3 size={16} />}
@@ -99,15 +110,17 @@ const ProjectDashboard: React.FC = () => {
                   >
                     Export
                   </Button>
-                  <div className="ml-auto">
-                    <Button
-                      variant="secondary"
-                      icon={<Plus size={16} />}
-                      onClick={() => setNewRiskModalOpen(true)}
-                    >
-                      Add Risk
-                    </Button>
-                  </div>
+                  {isManager && (
+                    <div className="ml-auto">
+                      <Button
+                        variant="secondary"
+                        icon={<Plus size={16} />}
+                        onClick={() => setNewRiskModalOpen(true)}
+                      >
+                        Add Risk
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>

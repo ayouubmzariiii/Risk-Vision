@@ -12,9 +12,10 @@ import {
   where, 
   onSnapshot,
   Timestamp,
-  getDocs
+  getDocs,
+  getDoc
 } from 'firebase/firestore';
-import { Project, Risk, GenerateRiskParams, RiskPriority, GenerationProgress } from '../types';
+import { Project, Risk, GenerateRiskParams, RiskPriority, GenerationProgress, TeamMember } from '../types';
 import { generateMitigationStrategy, generateRisks, generateSolutions as generateSolutionsAPI } from '../services/api';
 
 interface ProjectContextType {
@@ -92,11 +93,56 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const createProject = async (name: string, description: string, teamMembers: string[]): Promise<Project> => {
     if (!user) throw new Error('User must be logged in');
 
+    // Get user data for the creator
+    const userDoc = await getDoc(doc(db, 'users', user.uid));
+    const userData = userDoc.exists() ? userDoc.data() : {};
+
+    // Filter out creator's email from teamMembers to avoid duplication
+    const filteredTeamMembers = teamMembers.filter(email => email !== user.email!);
+    
+    // Create team members array with roles
+    const teamMembersWithRoles: TeamMember[] = [
+      // Creator as manager
+      {
+        email: user.email!,
+        displayName: userData.displayName || user.displayName || user.email!,
+        jobTitle: userData.jobTitle || 'Project Manager',
+        projectRole: userData.jobTitle || 'Project Manager',
+        role: 'manager' as const
+      },
+      // Invited members as workers (excluding creator)
+      ...await Promise.all(filteredTeamMembers.map(async (email) => {
+        try {
+          const memberQuery = query(collection(db, 'users'), where('email', '==', email));
+          const memberSnapshot = await getDocs(memberQuery);
+          const memberData = memberSnapshot.docs[0]?.data();
+          
+          return {
+            email,
+            displayName: memberData?.displayName || email,
+            jobTitle: memberData?.jobTitle || 'Team Member',
+            projectRole: memberData?.jobTitle || 'Team Member',
+            role: 'worker' as const
+          };
+        } catch (error) {
+          console.error('Error fetching member data:', error);
+          return {
+            email,
+            displayName: email,
+            jobTitle: 'Team Member',
+            projectRole: 'Team Member',
+            role: 'worker' as const
+          };
+        }
+      }))
+    ];
+
     const newProject = {
       userId: user.uid,
       name,
       description,
-      teamMembers: [user.email, ...teamMembers],
+      teamMembers: [user.email!, ...filteredTeamMembers], // Keep simple email array for queries
+      teamMembersData: teamMembersWithRoles, // Store detailed member data separately
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
       risks: []

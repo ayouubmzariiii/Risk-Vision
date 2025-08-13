@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useProjects } from '../../context/ProjectContext';
+import { useAuth } from '../../context/AuthContext';
 import { Risk, RiskCategory, RiskPriority, RiskStatus } from '../../types';
 import { Card, CardContent } from '../ui/Card';
 import Badge from '../ui/Badge';
@@ -11,6 +12,7 @@ import MitigationModal from './MitigationModal';
 
 const RiskList: React.FC = () => {
   const { currentProject, removeRisk, updateRisk, selectProject } = useProjects();
+  const { user } = useAuth();
   const [selectedRisk, setSelectedRisk] = useState<Risk | null>(null);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [mitigationModalOpen, setMitigationModalOpen] = useState(false);
@@ -82,6 +84,13 @@ const RiskList: React.FC = () => {
       setSortDirection('desc'); // Default to descending for new sort field
     }
   };
+
+  // Check if current user is a manager
+  const isManager = useMemo(() => {
+    if (!user || !currentProject?.teamMembersData) return false;
+    const currentUserMember = currentProject.teamMembersData.find(member => member.email === user.email);
+    return currentUserMember?.role === 'manager';
+  }, [user, currentProject?.teamMembersData]);
 
   const handleStatusChange = (risk: Risk, newStatus: RiskStatus) => {
     updateRisk({
@@ -244,17 +253,19 @@ const RiskList: React.FC = () => {
                     )}
                   </div>
                   <div className="flex flex-row md:flex-col gap-2 mt-4 md:mt-0">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      icon={<Edit size={14} />}
-                      onClick={() => {
-                        setSelectedRisk(risk);
-                        setEditModalOpen(true);
-                      }}
-                    >
-                      Edit
-                    </Button>
+                    {isManager && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        icon={<Edit size={14} />}
+                        onClick={() => {
+                          setSelectedRisk(risk);
+                          setEditModalOpen(true);
+                        }}
+                      >
+                        Edit
+                      </Button>
+                    )}
                     <Button
                       variant="outline"
                       size="sm"
@@ -266,48 +277,52 @@ const RiskList: React.FC = () => {
                     >
                       Mitigation
                     </Button>
-                    <Button
-                      variant="danger"
-                      size="sm"
-                      icon={<Trash2 size={14} />}
-                      onClick={() => {
-                        if (window.confirm('Are you sure you want to delete this risk?')) {
-                          removeRisk(risk.id);
-                        }
-                      }}
-                    >
-                      Delete
-                    </Button>
+                    {isManager && (
+                      <Button
+                        variant="danger"
+                        size="sm"
+                        icon={<Trash2 size={14} />}
+                        onClick={() => {
+                          if (window.confirm('Are you sure you want to delete this risk?')) {
+                            removeRisk(risk.id);
+                          }
+                        }}
+                      >
+                        Delete
+                      </Button>
+                    )}
                   </div>
                 </div>
-                <div className="mt-4 pt-4 border-t border-gray-200">
-                  <div className="flex justify-between">
-                    <div className="flex space-x-2">
-                      <Button
-                        variant={risk.status === 'open' ? 'primary' : 'outline'}
-                        size="sm"
-                        onClick={() => handleStatusChange(risk, 'open')}
-                      >
-                        Open
-                      </Button>
-                      <Button
-                        variant={risk.status === 'mitigated' ? 'secondary' : 'outline'}
-                        size="sm"
-                        onClick={() => handleStatusChange(risk, 'mitigated')}
-                      >
-                        Mitigated
-                      </Button>
-                      <Button
-                        variant={risk.status === 'closed' ? 'success' : 'outline'}
-                        size="sm"
-                        icon={<CheckCircle size={14} />}
-                        onClick={() => handleStatusChange(risk, 'closed')}
-                      >
-                        Closed
-                      </Button>
+                {isManager && (
+                  <div className="mt-4 pt-4 border-t border-gray-200">
+                    <div className="flex justify-between">
+                      <div className="flex space-x-2">
+                        <Button
+                          variant={risk.status === 'open' ? 'primary' : 'outline'}
+                          size="sm"
+                          onClick={() => handleStatusChange(risk, 'open')}
+                        >
+                          Open
+                        </Button>
+                        <Button
+                          variant={risk.status === 'mitigated' ? 'secondary' : 'outline'}
+                          size="sm"
+                          onClick={() => handleStatusChange(risk, 'mitigated')}
+                        >
+                          Mitigated
+                        </Button>
+                        <Button
+                          variant={risk.status === 'closed' ? 'success' : 'outline'}
+                          size="sm"
+                          icon={<CheckCircle size={14} />}
+                          onClick={() => handleStatusChange(risk, 'closed')}
+                        >
+                          Closed
+                        </Button>
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
               </CardContent>
             </Card>
           ))}

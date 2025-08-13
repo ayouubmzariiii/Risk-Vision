@@ -30,11 +30,19 @@ const Tasks: React.FC = () => {
     scrollToTop();
   }, []);
 
+  // Check if current user is a manager in any project
+  const getUserRoleInProject = (projectId: string) => {
+    const project = projects.find(p => p.id === projectId);
+    if (!project?.teamMembersData || !user) return 'worker';
+    const currentUserMember = project.teamMembersData.find(member => member.email === user.email);
+    return currentUserMember?.role || 'worker';
+  };
+
   // Get all risks assigned to the current user
   const userRisks = useMemo(() => {
     if (!user) return [];
     
-    const allRisks: (Risk & { projectName: string })[] = [];
+    const allRisks: (Risk & { projectName: string; userRole: string })[] = [];
     
     projects.forEach(project => {
       project.risks
@@ -42,7 +50,8 @@ const Tasks: React.FC = () => {
         .forEach(risk => {
           allRisks.push({
             ...risk,
-            projectName: project.name
+            projectName: project.name,
+            userRole: getUserRoleInProject(project.id)
           });
         });
     });
@@ -293,17 +302,19 @@ const Tasks: React.FC = () => {
                     </div>
                     
                     <div className="flex flex-row md:flex-col gap-2 mt-4 md:mt-0 md:ml-4">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        icon={<Edit size={14} />}
-                        onClick={() => {
-                          setSelectedRisk(risk);
-                          setEditModalOpen(true);
-                        }}
-                      >
-                        Edit
-                      </Button>
+                      {risk.userRole === 'manager' && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          icon={<Edit size={14} />}
+                          onClick={() => {
+                            setSelectedRisk(risk);
+                            setEditModalOpen(true);
+                          }}
+                        >
+                          Edit
+                        </Button>
+                      )}
                       <Button
                         variant="outline"
                         size="sm"
