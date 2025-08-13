@@ -71,11 +71,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         photoURL: profileData.photoURL
       });
 
-      // Store user data in Firestore
+      // Store user data in Firestore with default API configuration
       const userData = {
         ...profileData,
         uid: userCredential.user.uid,
         email: userCredential.user.email,
+        apiConfig: {
+          provider: 'riskvision',
+          apiKey: 'sk-0d3cbfcd7feb478ea7ef1398aaa6a1b7',
+          model: 'deepseek-chat'
+        },
         createdAt: new Date(),
         updatedAt: new Date()
       };
@@ -107,13 +112,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const userDoc = await getDoc(doc(db, 'users', result.user.uid));
       
       if (!userDoc.exists()) {
-        // Create new user document if it doesn't exist
+        // Create new user document if it doesn't exist with default API configuration
         const userData = {
           uid: result.user.uid,
           email: result.user.email,
           displayName: result.user.displayName,
           photoURL: result.user.photoURL,
           role: 'user',
+          apiConfig: {
+            provider: 'riskvision',
+            apiKey: 'sk-0d3cbfcd7feb478ea7ef1398aaa6a1b7',
+            model: 'deepseek-chat'
+          },
           createdAt: new Date(),
           updatedAt: new Date()
         };

@@ -19,7 +19,12 @@ const ProjectDashboard: React.FC = () => {
   const [newRiskModalOpen, setNewRiskModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'risks' | 'generate' | 'matrix' | 'export'>('risks');
 
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   useEffect(() => {
+    scrollToTop();
     if (id) {
       selectProject(id);
     }

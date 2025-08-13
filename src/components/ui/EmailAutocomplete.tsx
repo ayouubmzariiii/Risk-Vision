@@ -157,7 +157,7 @@ const EmailAutocomplete: React.FC<EmailAutocompleteProps> = ({
 
   return (
     <div ref={wrapperRef} className="space-y-2">
-      <div className="relative">
+      <div className="relative overflow-visible">
         <Input
           label={label}
           value={inputValue}
@@ -168,7 +168,7 @@ const EmailAutocomplete: React.FC<EmailAutocompleteProps> = ({
         />
         
         {showSuggestions && inputValue && !isMaxReached && (
-          <div className="absolute z-10 w-full mt-1 bg-white rounded-md shadow-lg border border-gray-200">
+          <div className="absolute z-[9999] w-full mt-1 bg-white rounded-md shadow-lg border border-gray-200 max-h-60 overflow-y-auto">
             {isSearching ? (
               <div className="px-3 py-2 text-sm text-gray-500">
                 Searching...

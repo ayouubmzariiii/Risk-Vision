@@ -1,9 +1,31 @@
-import { GenerateMitigationParams, GenerateRiskParams, Risk, RiskCategory, MitigationStrategy, TeamMember } from '../types';
+import { GenerateMitigationParams, GenerateRiskParams, Risk, RiskCategory, MitigationStrategy, TeamMember, APIConfiguration, AIProvider } from '../types';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../config/firebase';
 
-const API_KEY = "sk-0d3cbfcd7feb478ea7ef1398aaa6a1b7";
-const API_URL = "https://api.deepseek.com/v1/chat/completions";
+// Default RiskVision API configuration (using DeepSeek)
+const DEFAULT_API_CONFIG: APIConfiguration = {
+  provider: 'riskvision',
+  apiKey: 'sk-0d3cbfcd7feb478ea7ef1398aaa6a1b7',
+  model: 'deepseek-chat'
+};
 
-interface DeepseekResponse {
+// API endpoints for different providers
+const API_ENDPOINTS = {
+  riskvision: 'https://api.deepseek.com/v1/chat/completions',
+  deepseek: 'https://api.deepseek.com/v1/chat/completions',
+  openai: 'https://api.openai.com/v1/chat/completions',
+  gemini: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent'
+};
+
+// Default models for each provider
+const DEFAULT_MODELS = {
+  riskvision: 'deepseek-chat',
+  deepseek: 'deepseek-chat',
+  openai: 'gpt-3.5-turbo',
+  gemini: 'gemini-pro'
+};
+
+interface APIResponse {
   choices: {
     message: {
       content: string;
@@ -11,39 +33,108 @@ interface DeepseekResponse {
   }[];
 }
 
-const callDeepseekAPI = async (prompt: string): Promise<string> => {
+interface GeminiResponse {
+  candidates: {
+    content: {
+      parts: {
+        text: string;
+      }[];
+    };
+  }[];
+}
+
+// Get user's API configuration
+const getUserAPIConfig = async (userId?: string): Promise<APIConfiguration> => {
+  if (!userId) {
+    return DEFAULT_API_CONFIG;
+  }
+
   try {
-    const response = await fetch(API_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${API_KEY}`
-      },
-      body: JSON.stringify({
-        model: "deepseek-chat",
-        messages: [
-          {
-            role: "user",
-            content: prompt
-          }
-        ],
-        temperature: 0.7
-      })
-    });
-
-    if (!response.ok) {
-      throw new Error(`API request failed with status ${response.status}`);
+    const userDoc = await getDoc(doc(db, 'users', userId));
+    if (userDoc.exists()) {
+      const userData = userDoc.data();
+      if (userData.apiConfig) {
+        return userData.apiConfig;
+      }
     }
-
-    const data = await response.json() as DeepseekResponse;
-    return data.choices[0].message.content;
   } catch (error) {
-    console.error('Error calling DeepSeek API:', error);
+    console.error('Error fetching user API config:', error);
+  }
+
+  return DEFAULT_API_CONFIG;
+};
+
+// Dynamic API call based on provider
+const callAI = async (prompt: string, userId?: string): Promise<string> => {
+  const config = await getUserAPIConfig(userId);
+  const endpoint = API_ENDPOINTS[config.provider];
+  const model = config.model || DEFAULT_MODELS[config.provider];
+
+  try {
+    if (config.provider === 'gemini') {
+      return await callGeminiAPI(prompt, config.apiKey, model);
+    } else {
+      return await callOpenAICompatibleAPI(prompt, config.apiKey, endpoint, model);
+    }
+  } catch (error) {
+    console.error(`Error calling ${config.provider} API:`, error);
     throw error;
   }
 };
 
-export const generateRisks = async (params: GenerateRiskParams): Promise<Partial<Risk>[]> => {
+// OpenAI-compatible API call (works for OpenAI, DeepSeek, RiskVision)
+const callOpenAICompatibleAPI = async (prompt: string, apiKey: string, endpoint: string, model: string): Promise<string> => {
+  const response = await fetch(endpoint, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${apiKey}`
+    },
+    body: JSON.stringify({
+      model,
+      messages: [
+        {
+          role: "user",
+          content: prompt
+        }
+      ],
+      temperature: 0.7
+    })
+  });
+
+  if (!response.ok) {
+    throw new Error(`API request failed with status ${response.status}`);
+  }
+
+  const data = await response.json() as APIResponse;
+  return data.choices[0].message.content;
+};
+
+// Gemini API call (different format)
+const callGeminiAPI = async (prompt: string, apiKey: string, model: string): Promise<string> => {
+  const response = await fetch(`${API_ENDPOINTS.gemini}?key=${apiKey}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      contents: [{
+        parts: [{
+          text: prompt
+        }]
+      }]
+    })
+  });
+
+  if (!response.ok) {
+    throw new Error(`Gemini API request failed with status ${response.status}`);
+  }
+
+  const data = await response.json() as GeminiResponse;
+  return data.candidates[0].content.parts[0].text;
+};
+
+export const generateRisks = async (params: GenerateRiskParams, userId?: string): Promise<Partial<Risk>[]> => {
   const { 
     industry = 'general', 
     projectType = 'general', 
@@ -117,7 +208,7 @@ export const generateRisks = async (params: GenerateRiskParams): Promise<Partial
   `;
 
   try {
-    const response = await callDeepseekAPI(prompt);
+    const response = await callAI(prompt, userId);
     const jsonMatch = response.match(/\[\s*{[\s\S]*}\s*\]/);
     if (!jsonMatch) {
       throw new Error('Failed to extract JSON from API response');
@@ -141,7 +232,7 @@ export const generateRisks = async (params: GenerateRiskParams): Promise<Partial
   }
 };
 
-export const generateMitigationStrategy = async (params: GenerateMitigationParams): Promise<MitigationStrategy> => {
+export const generateMitigationStrategy = async (params: GenerateMitigationParams, userId?: string): Promise<MitigationStrategy> => {
   const { risk, teamMembers = [] } = params;
 
   const teamMembersText = teamMembers.length > 0 
@@ -207,7 +298,7 @@ export const generateMitigationStrategy = async (params: GenerateMitigationParam
   `;
 
   try {
-    const response = await callDeepseekAPI(prompt);
+    const response = await callAI(prompt, userId);
     const jsonMatch = response.match(/\{[\s\S]*\}/);
     if (!jsonMatch) {
       throw new Error('Failed to extract JSON from API response');
@@ -220,7 +311,63 @@ export const generateMitigationStrategy = async (params: GenerateMitigationParam
   }
 };
 
-export const generateSolutions = async (risk: Risk): Promise<string[]> => {
+export const fillFormWithAI = async (projectName: string, projectDescription: string, userId?: string): Promise<{
+  industry: string;
+  projectType: string;
+  country: string;
+  budget: string;
+  timeline: string;
+  teamSize: string;
+  stakeholders: string;
+  regulations: string;
+}> => {
+  const prompt = `
+    Based on the following project information, please fill out a risk generation form with appropriate values:
+    
+    Project Name: ${projectName}
+    Project Description: ${projectDescription}
+    
+    Please provide realistic and specific values for the following fields based on the project context:
+    - Industry (e.g., Software, Construction, Healthcare)
+    - Project Type (e.g., Mobile App, Building Construction)
+    - Country/Region (infer from context or use a reasonable default)
+    - Project Budget (provide a realistic estimate with currency)
+    - Timeline (provide a realistic project duration)
+    - Team Size (estimate based on project scope)
+    - Key Stakeholders (identify likely stakeholders for this type of project)
+    - Regulatory Requirements (identify relevant regulations/standards)
+    
+    Return the response as a JSON object with these exact keys:
+    {
+      "industry": "value",
+      "projectType": "value",
+      "country": "value",
+      "budget": "value",
+      "timeline": "value",
+      "teamSize": "value",
+      "stakeholders": "value",
+      "regulations": "value"
+    }
+    
+    Make sure the values are realistic and relevant to the project described.
+  `;
+  
+  try {
+    const response = await callAI(prompt, userId);
+    // Extract JSON from the response
+    const jsonMatch = response.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      return JSON.parse(jsonMatch[0]);
+    } else {
+      throw new Error('Invalid response format from AI');
+    }
+  } catch (error) {
+    console.error('Error filling form with AI:', error);
+    throw error;
+  }
+};
+
+export const generateSolutions = async (risk: Risk, userId?: string): Promise<string[]> => {
   const prompt = `
     Generate practical solutions for the following project risk:
     
@@ -242,7 +389,7 @@ export const generateSolutions = async (risk: Risk): Promise<string[]> => {
   `;
 
   try {
-    const response = await callDeepseekAPI(prompt);
+    const response = await callAI(prompt, userId);
     const jsonMatch = response.match(/\[\s*".*"\s*\]/s);
     if (!jsonMatch) {
       throw new Error('Failed to extract JSON from API response');

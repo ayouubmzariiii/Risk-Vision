@@ -10,6 +10,17 @@ import Profile from './pages/Profile';
 import Landing from './pages/Landing';
 import Contact from './pages/Contact';
 import FAQ from './pages/FAQ';
+import About from './pages/About';
+import Security from './pages/Security';
+import Privacy from './pages/Privacy';
+import Terms from './pages/Terms';
+import Blog from './pages/Blog';
+import Careers from './pages/Careers';
+import Documentation from './pages/Documentation';
+import Help from './pages/Help';
+import Status from './pages/Status';
+import Integrations from './pages/Integrations';
+import Cookies from './pages/Cookies';
 import PrivateRoute from './components/auth/PrivateRoute';
 
 function App() {
@@ -24,6 +35,17 @@ function App() {
                 <Route path="/" element={<Landing />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/faq" element={<FAQ />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/security" element={<Security />} />
+                <Route path="/privacy" element={<Privacy />} />
+                <Route path="/terms" element={<Terms />} />
+                <Route path="/blog" element={<Blog />} />
+                <Route path="/careers" element={<Careers />} />
+                <Route path="/documentation" element={<Documentation />} />
+                <Route path="/help" element={<Help />} />
+                <Route path="/status" element={<Status />} />
+                <Route path="/integrations" element={<Integrations />} />
+                <Route path="/cookies" element={<Cookies />} />
                 <Route path="/auth" element={<Auth />} />
                 
                 {/* Dashboard Routes (Protected) */}
@@ -37,9 +59,14 @@ function App() {
             <footer className="bg-white shadow-inner mt-auto py-6">
               <div className="max-w-7xl mx-auto px-4 sm:px-6">
                 <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
-                  <p className="text-center md:text-left text-gray-500 text-sm">
-                    RiskVision - Intelligent Risk Management © {new Date().getFullYear()}
-                  </p>
+                  <div className="text-center md:text-left">
+                    <p className="text-gray-500 text-sm">
+                      RiskVision - Intelligent Risk Management © {new Date().getFullYear()}
+                    </p>
+                    <p className="text-gray-400 text-xs mt-1">
+                      Created by Ayoub Mzari & Sophia Alami
+                    </p>
+                  </div>
                   <div className="flex items-center space-x-3">
                     <span className="text-gray-400 text-sm">Sponsored by</span>
                     <img 

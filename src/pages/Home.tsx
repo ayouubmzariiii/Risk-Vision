@@ -11,6 +11,14 @@ const Home: React.FC = () => {
   const { projects } = useProjects();
   const [newProjectModalOpen, setNewProjectModalOpen] = useState(false);
 
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  React.useEffect(() => {
+    scrollToTop();
+  }, []);
+
   return (
     <AppLayout>
       <div className="px-4 py-8 max-w-7xl mx-auto">
@@ -78,6 +86,7 @@ const Home: React.FC = () => {
           isOpen={newProjectModalOpen}
           onClose={() => setNewProjectModalOpen(false)}
           title="Create New Project"
+          allowOverflow={true}
         >
           <ProjectForm onComplete={() => setNewProjectModalOpen(false)} />
         </Modal>

@@ -23,6 +23,15 @@ import {
 const Contact: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  React.useEffect(() => {
+    scrollToTop();
+  }, []);
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -149,48 +158,29 @@ const Contact: React.FC = () => {
       {/* Header */}
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 flex items-center justify-between">
-          <div className="flex items-center">
-            <Button
-              variant="outline"
-              icon={<ArrowLeft size={16} />}
-              onClick={() => navigate('/')}
-              className="mr-4"
-            >
-              Back
-            </Button>
-            <button 
-              onClick={() => navigate('/')}
-              className="flex items-center hover:opacity-80 transition-opacity"
-            >
-              <Shield className="h-8 w-8 text-blue-600" />
-              <h1 className="ml-2 text-xl font-bold text-gray-900">RiskVision</h1>
-            </button>
-          </div>
+          <button 
+            onClick={() => navigate('/')}
+            className="flex items-center hover:opacity-80 transition-opacity"
+          >
+            <Shield className="h-8 w-8 text-blue-600" />
+            <h1 className="ml-2 text-xl font-bold text-gray-900">RiskVision</h1>
+          </button>
+          <nav className="hidden md:flex items-center space-x-8">
+             <button onClick={() => navigate('/')} className="text-gray-700 hover:text-blue-600 transition-colors">Home</button>
+             <button onClick={() => navigate('/contact')} className="text-gray-700 hover:text-blue-600 transition-colors">Contact</button>
+             <button onClick={() => navigate('/faq')} className="text-gray-700 hover:text-blue-600 transition-colors">FAQ</button>
+             <button onClick={() => navigate('/about')} className="text-gray-700 hover:text-blue-600 transition-colors">About</button>
+           </nav>
           <div className="flex items-center space-x-4">
             {user ? (
               <>
-                <Button
-                  variant="primary"
-                  onClick={() => navigate('/dashboard')}
-                >
-                  Go to Dashboard
-                </Button>
+                <Button variant="primary" onClick={() => navigate('/dashboard')}>Go to Dashboard</Button>
                 <ProfileDropdown />
               </>
             ) : (
               <>
-                <Button
-                  variant="outline"
-                  onClick={() => navigate('/auth')}
-                >
-                  Sign In
-                </Button>
-                <Button
-                  variant="primary"
-                  onClick={() => navigate('/auth')}
-                >
-                  Get Started
-                </Button>
+                <Button variant="outline" onClick={() => navigate('/auth')}>Sign In</Button>
+                <Button variant="primary" onClick={() => navigate('/auth')}>Get Started</Button>
               </>
             )}
           </div>
@@ -484,7 +474,7 @@ const Contact: React.FC = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
               onClick={() => navigate('/auth')}
-              className="inline-flex items-center justify-center px-8 py-4 text-lg font-medium rounded-md bg-white text-gray-900 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white transition-colors"
+              className="inline-flex items-center justify-center px-8 py-4 text-lg font-medium rounded-md bg-white text-black hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white transition-colors"
             >
               Start Free Trial
             </button>
@@ -523,8 +513,7 @@ const Contact: React.FC = () => {
             <div>
               <h4 className="font-semibold mb-4">Product</h4>
               <ul className="space-y-2 text-gray-400">
-                <li><button onClick={() => navigate('/#features')} className="hover:text-white transition-colors">Features</button></li>
-                <li><button onClick={() => navigate('/#pricing')} className="hover:text-white transition-colors">Pricing</button></li>
+
                 <li><a href="#" className="hover:text-white transition-colors">Security</a></li>
                 <li><a href="#" className="hover:text-white transition-colors">Integrations</a></li>
               </ul>

@@ -2,6 +2,14 @@ export type RiskStatus = 'open' | 'mitigated' | 'closed';
 export type RiskCategory = 'technical' | 'financial' | 'operational' | 'schedule' | 'scope' | 'resource' | 'stakeholder' | 'legal' | 'security' | 'quality' | 'custom';
 export type RiskPriority = 'low' | 'medium' | 'high' | 'critical';
 
+export type AIProvider = 'riskvision' | 'openai' | 'deepseek' | 'gemini';
+
+export interface APIConfiguration {
+  provider: AIProvider;
+  apiKey: string;
+  model?: string;
+}
+
 export interface UserProfile {
   uid: string;
   email: string;
@@ -12,6 +20,7 @@ export interface UserProfile {
   role: string;
   phoneNumber?: string;
   photoURL?: string;
+  apiConfig?: APIConfiguration;
   createdAt: Date;
   updatedAt: Date;
 }

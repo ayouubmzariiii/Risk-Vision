@@ -15,7 +15,7 @@ import {
   getDocs
 } from 'firebase/firestore';
 import { Project, Risk, GenerateRiskParams, RiskPriority, GenerationProgress } from '../types';
-import { generateMitigationStrategy, generateRisks, generateSolutions } from '../services/api';
+import { generateMitigationStrategy, generateRisks, generateSolutions as generateSolutionsAPI } from '../services/api';
 
 interface ProjectContextType {
   projects: Project[];
@@ -221,7 +221,7 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
         message: 'Generating risks...'
       });
 
-      const generatedRisks = await generateRisks(params);
+      const generatedRisks = await generateRisks(params, user.uid);
       let updatedRisks = [...currentProject.risks];
 
       for (let i = 0; i < generatedRisks.length; i++) {
@@ -256,7 +256,7 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
         const strategy = await generateMitigationStrategy({
           risk: newRisk,
           teamMembers: params.teamMembers
-        });
+        }, user.uid);
         newRisk.mitigationStrategy = strategy;
 
         setGenerationProgress({
@@ -266,7 +266,7 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
           message: `Generating solutions for risk: ${newRisk.title}`
         });
 
-        const solutions = await generateSolutions(newRisk);
+        const solutions = await generateSolutionsAPI(newRisk, user.uid);
         newRisk.solutions = solutions;
 
         updatedRisks = [...updatedRisks, newRisk];
@@ -297,14 +297,33 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
   };
 
   const generateRiskMitigation = async (risk: Risk): Promise<string> => {
+    if (!user) throw new Error('User not authenticated');
+    
     setLoading(true);
     setError(null);
     
     try {
-      const mitigation = await generateMitigationStrategy({ risk });
+      const mitigation = await generateMitigationStrategy({ risk }, user.uid);
       return mitigation;
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to generate mitigation strategy');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const generateSolutions = async (risk: Risk): Promise<string[]> => {
+    if (!user) throw new Error('User not authenticated');
+    
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const solutions = await generateSolutionsAPI(risk, user.uid);
+      return solutions;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to generate solutions');
       throw err;
     } finally {
       setLoading(false);

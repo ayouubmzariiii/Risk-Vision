@@ -31,6 +31,14 @@ const Landing: React.FC = () => {
   const { user } = useAuth();
   const [selectedModal, setSelectedModal] = useState<string | null>(null);
 
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  React.useEffect(() => {
+    scrollToTop();
+  }, []);
+
   const handleGetStarted = () => {
     if (user) {
       navigate('/dashboard');
@@ -273,8 +281,7 @@ const Landing: React.FC = () => {
             <h1 className="ml-2 text-xl font-bold text-gray-900">RiskVision</h1>
           </button>
           <nav className="hidden md:flex items-center space-x-8">
-            <a href="#features" className="text-gray-700 hover:text-blue-600 transition-colors">Features</a>
-            <a href="#pricing" className="text-gray-700 hover:text-blue-600 transition-colors">Pricing</a>
+            <button onClick={() => navigate('/')} className="text-gray-700 hover:text-blue-600 transition-colors">Home</button>
             <button 
               onClick={() => navigate('/contact')}
               className="text-gray-700 hover:text-blue-600 transition-colors"
@@ -286,6 +293,12 @@ const Landing: React.FC = () => {
               className="text-gray-700 hover:text-blue-600 transition-colors"
             >
               FAQ
+            </button>
+            <button 
+              onClick={() => navigate('/about')}
+              className="text-gray-700 hover:text-blue-600 transition-colors"
+            >
+              About
             </button>
           </nav>
           <div className="flex items-center space-x-4">
@@ -351,7 +364,12 @@ const Landing: React.FC = () => {
                   variant="outline"
                   size="lg"
                   className="text-lg px-8 py-4"
-                  onClick={() => document.getElementById('demo')?.scrollIntoView({ behavior: 'smooth' })}
+                  onClick={() => {
+                    scrollToTop();
+                    setTimeout(() => {
+                      document.getElementById('demo')?.scrollIntoView({ behavior: 'smooth' });
+                    }, 100);
+                  }}
                 >
                   Watch Demo
                 </Button>
@@ -610,7 +628,7 @@ const Landing: React.FC = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
               onClick={handleGetStarted}
-              className="inline-flex items-center justify-center px-8 py-4 text-lg font-medium rounded-md bg-white text-gray-900 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white transition-colors"
+              className="inline-flex items-center justify-center px-8 py-4 text-lg font-medium rounded-md bg-white text-black hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white transition-colors"
             >
               <ArrowRight size={20} className="mr-2" />
               {user ? 'Go to Dashboard' : 'Start Your Free Trial'}
@@ -640,6 +658,10 @@ const Landing: React.FC = () => {
               <p className="text-gray-400 mb-4">
                 Intelligent risk management for modern teams. Powered by AI, built for collaboration.
               </p>
+              <div className="flex items-center space-x-2 mb-4">
+                <span className="text-gray-400 text-sm">Created by</span>
+                <span className="text-white text-sm font-medium">Ayoub Mzari & Sophia Alami</span>
+              </div>
               <div className="flex items-center space-x-2">
                 <span className="text-gray-400 text-sm">Sponsored by</span>
                 <img 
@@ -653,19 +675,29 @@ const Landing: React.FC = () => {
             <div>
               <h4 className="font-semibold mb-4">Product</h4>
               <ul className="space-y-2 text-gray-400">
-                <li><a href="#features" className="hover:text-white transition-colors">Features</a></li>
-                <li><a href="#pricing" className="hover:text-white transition-colors">Pricing</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Security</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Integrations</a></li>
+                <li><button onClick={() => {
+                  scrollToTop();
+                  setTimeout(() => {
+                    document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
+                  }, 100);
+                }} className="hover:text-white transition-colors">Features</button></li>
+                <li><button onClick={() => {
+                  scrollToTop();
+                  setTimeout(() => {
+                    document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' });
+                  }, 100);
+                }} className="hover:text-white transition-colors">Pricing</button></li>
+                <li><button onClick={() => navigate('/security')} className="hover:text-white transition-colors">Security</button></li>
+                <li><button onClick={() => navigate('/integrations')} className="hover:text-white transition-colors">Integrations</button></li>
               </ul>
             </div>
             
             <div>
               <h4 className="font-semibold mb-4">Company</h4>
               <ul className="space-y-2 text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">About</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Blog</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Careers</a></li>
+                <li><button onClick={() => navigate('/about')} className="hover:text-white transition-colors">About</button></li>
+                <li><button onClick={() => navigate('/blog')} className="hover:text-white transition-colors">Blog</button></li>
+                <li><button onClick={() => navigate('/careers')} className="hover:text-white transition-colors">Careers</button></li>
                 <li><button onClick={() => navigate('/contact')} className="hover:text-white transition-colors">Contact</button></li>
               </ul>
             </div>
@@ -673,22 +705,22 @@ const Landing: React.FC = () => {
             <div>
               <h4 className="font-semibold mb-4">Support</h4>
               <ul className="space-y-2 text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">Documentation</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Help Center</a></li>
+                <li><button onClick={() => navigate('/documentation')} className="hover:text-white transition-colors">Documentation</button></li>
+                <li><button onClick={() => navigate('/help')} className="hover:text-white transition-colors">Help Center</button></li>
                 <li><button onClick={() => navigate('/faq')} className="hover:text-white transition-colors">FAQ</button></li>
-                <li><a href="#" className="hover:text-white transition-colors">Status</a></li>
+                <li><button onClick={() => navigate('/status')} className="hover:text-white transition-colors">Status</button></li>
               </ul>
             </div>
           </div>
           
           <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-400 text-sm">
-              © {new Date().getFullYear()} RiskVision. All rights reserved.
+              © {new Date().getFullYear()} RiskVision. All rights reserved. Created by Ayoub Mzari & Sophia Alami.
             </p>
             <div className="flex space-x-6 mt-4 md:mt-0">
-              <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">Privacy Policy</a>
-              <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">Terms of Service</a>
-              <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">Cookie Policy</a>
+              <button onClick={() => navigate('/privacy')} className="text-gray-400 hover:text-white text-sm transition-colors">Privacy Policy</button>
+              <button onClick={() => navigate('/terms')} className="text-gray-400 hover:text-white text-sm transition-colors">Terms of Service</button>
+              <button onClick={() => navigate('/cookies')} className="text-gray-400 hover:text-white text-sm transition-colors">Cookie Policy</button>
             </div>
           </div>
         </div>

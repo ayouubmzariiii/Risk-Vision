@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useProjects } from '../../context/ProjectContext';
+import { useAuth } from '../../context/AuthContext';
 import Button from '../ui/Button';
 import { Input } from '../ui/Input';
 import { Plus, Wand2 } from 'lucide-react';
@@ -11,10 +12,18 @@ interface ProjectFormProps {
 
 const ProjectForm: React.FC<ProjectFormProps> = ({ onComplete }) => {
   const { createProject } = useProjects();
+  const { user } = useAuth();
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [teamMembers, setTeamMembers] = useState<string[]>([]);
   const [errors, setErrors] = useState<{ name?: string; description?: string }>({});
+
+  // Add current user to team members by default
+  useEffect(() => {
+    if (user?.email && !teamMembers.includes(user.email)) {
+      setTeamMembers([user.email]);
+    }
+  }, [user?.email]);
 
   const validateForm = (): boolean => {
     const newErrors: { name?: string; description?: string } = {};

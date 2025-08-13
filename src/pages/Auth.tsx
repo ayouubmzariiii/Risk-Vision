@@ -11,6 +11,14 @@ const Auth: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
 
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  React.useEffect(() => {
+    scrollToTop();
+  }, []);
+
   if (user) {
     navigate('/dashboard');
     return null;

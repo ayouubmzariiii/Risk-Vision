@@ -25,9 +25,14 @@ const ProjectList: React.FC = () => {
     });
   };
 
+  // Sort projects by creation date (newest first)
+  const sortedProjects = [...projects].sort((a, b) => 
+    new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  );
+
   return (
     <div className="space-y-4">
-      {projects.map((project) => (
+      {sortedProjects.map((project) => (
         <Card
           key={project.id}
           className="transition-all hover:shadow-lg"
@@ -64,7 +69,7 @@ const ProjectList: React.FC = () => {
                 variant="primary"
                 size="sm"
                 icon={<ArrowRight size={16} />}
-                onClick={() => navigate(`/project/${project.id}`)}
+                onClick={() => navigate(`/dashboard/project/${project.id}`)}
               >
                 View Project
               </Button>

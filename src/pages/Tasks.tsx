@@ -22,6 +22,14 @@ const Tasks: React.FC = () => {
   const [sortField, setSortField] = useState<'priority' | 'createdAt'>('priority');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
 
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  React.useEffect(() => {
+    scrollToTop();
+  }, []);
+
   // Get all risks assigned to the current user
   const userRisks = useMemo(() => {
     if (!user) return [];

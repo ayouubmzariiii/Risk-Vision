@@ -7,6 +7,7 @@ interface ModalProps {
   title: string;
   children: React.ReactNode;
   size?: 'sm' | 'md' | 'lg' | 'xl';
+  allowOverflow?: boolean;
 }
 
 const Modal: React.FC<ModalProps> = ({
@@ -14,7 +15,8 @@ const Modal: React.FC<ModalProps> = ({
   onClose,
   title,
   children,
-  size = 'md'
+  size = 'md',
+  allowOverflow = false
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
 
@@ -72,7 +74,7 @@ const Modal: React.FC<ModalProps> = ({
     <div className="fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-50 flex items-center justify-center p-4">
       <div 
         ref={modalRef}
-        className={`bg-white rounded-lg shadow-xl transform transition-all ${width} w-full`}
+        className={`bg-white rounded-lg shadow-xl transform transition-all ${width} w-full ${allowOverflow ? 'overflow-visible' : 'overflow-hidden'}`}
       >
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
           <h3 className="text-lg font-medium text-gray-900">{title}</h3>
@@ -83,7 +85,7 @@ const Modal: React.FC<ModalProps> = ({
             <X size={20} />
           </button>
         </div>
-        <div className="px-6 py-4 max-h-[calc(100vh-200px)] overflow-y-auto">
+        <div className={`px-6 py-4 max-h-[calc(100vh-200px)] ${allowOverflow ? 'overflow-visible' : 'overflow-y-auto'}`}>
           {children}
         </div>
       </div>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useProjects } from '../../context/ProjectContext';
+import { useAuth } from '../../context/AuthContext';
 import Button from '../ui/Button';
 import { Wand2, Users, Edit2, Check, X, Loader } from 'lucide-react';
 import { RiskCategory, TeamMember } from '../../types';
@@ -11,6 +12,7 @@ import Modal from '../ui/Modal';
 
 const RiskGenerator: React.FC<{ onComplete?: () => void }> = ({ onComplete }) => {
   const { generateProjectRisks, loading, error, currentProject, updateProject, generationProgress } = useProjects();
+  const { user } = useAuth();
   const [industry, setIndustry] = useState('');
   const [projectType, setProjectType] = useState('');
   const [count, setCount] = useState<number>(5);
@@ -130,6 +132,8 @@ const RiskGenerator: React.FC<{ onComplete?: () => void }> = ({ onComplete }) =>
     setEditedRole('');
   };
 
+
+
   const handleGenerateRisks = async () => {
     if (!currentProject) return;
 
@@ -163,7 +167,9 @@ const RiskGenerator: React.FC<{ onComplete?: () => void }> = ({ onComplete }) =>
   return (
     <Card>
       <CardHeader>
-        <h2 className="text-xl font-semibold mb-4">Generate Project Risks</h2>
+        <div className="mb-4">
+          <h2 className="text-xl font-semibold">Generate Project Risks</h2>
+        </div>
         <p className="text-sm text-gray-500">
           Provide project details to generate relevant risks using AI. The more information you provide,
           the more accurate and specific the generated risks will be.
