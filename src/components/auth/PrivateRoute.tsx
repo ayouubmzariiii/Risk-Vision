@@ -13,7 +13,7 @@ const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => 
     );
   }
 
-  return user ? <>{children}</> : <Navigate to="/" />;
+  return user ? <>{children}</> : <Navigate to="/auth" />;
 };
 
 export default PrivateRoute;

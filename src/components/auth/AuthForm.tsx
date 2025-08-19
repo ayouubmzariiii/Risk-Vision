@@ -20,6 +20,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onSuccess }) => {
   const [role, setRole] = useState('user');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -62,13 +63,13 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onSuccess }) => {
 
   const handleGoogleSignIn = async () => {
     try {
-      setLoading(true);
+      setGoogleLoading(true);
       await signInWithGoogle();
       if (onSuccess) onSuccess();
     } catch (err) {
       setFormError(err instanceof Error ? err.message : 'Failed to sign in with Google');
     } finally {
-      setLoading(false);
+      setGoogleLoading(false);
     }
   };
 
@@ -79,7 +80,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onSuccess }) => {
         variant="outline"
         className="w-full"
         onClick={handleGoogleSignIn}
-        isLoading={loading}
+        isLoading={googleLoading}
       >
         <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" className="w-5 h-5 mr-2" />
         Continue with Google

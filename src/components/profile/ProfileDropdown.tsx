@@ -59,8 +59,9 @@ const ProfileDropdown: React.FC = () => {
             Profile Settings
           </button>
           <button
-            onClick={() => {
-              logOut();
+            onClick={async () => {
+              await logOut();
+              navigate('/auth');
               setIsOpen(false);
             }}
             className="w-full px-4 py-2 text-sm text-red-600 hover:bg-gray-100 flex items-center"
